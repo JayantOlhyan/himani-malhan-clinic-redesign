@@ -4,7 +4,11 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { MobileActionBar } from "@/components/MobileActionBar";
 import { SITE_URL, doctor } from "@/content/site";
+import { validateContent } from "@/content/validate";
 import "./globals.css";
+
+// Fail the build on malformed content (server-only; runs once at build time).
+validateContent();
 
 const cormorant = localFont({
   src: [
