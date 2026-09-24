@@ -52,7 +52,7 @@ export function Hero() {
             tone="ivory"
             priority
             position="center top"
-            sizes="(min-width: 1024px) 40vw, 100vw"
+            sizes="(min-width: 1024px) 40vw, (min-width: 768px) 70vw, 100vw"
             className="relative aspect-[4/5] w-full lg:aspect-[6/7]"
           />
           <div className="relative -mt-14 mr-10 ml-4 border border-line bg-paper px-6 py-5 shadow-[0_18px_40px_-24px_rgb(74_38_55/0.35)] sm:mr-auto sm:ml-8 sm:max-w-sm">

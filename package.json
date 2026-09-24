@@ -10,7 +10,10 @@
     "lint": "tsc --noEmit && prettier --check src scripts",
     "import:source": "node scripts/import-source.mjs",
     "qa": "node scripts/qa.mjs",
-    "format": "prettier --write src scripts"
+    "format": "prettier --write src scripts",
+    "images": "node scripts/images.mjs",
+    "predev": "node scripts/images.mjs",
+    "prebuild": "node scripts/images.mjs"
   },
   "dependencies": {
     "@fontsource-variable/cormorant-garamond": "^5.3.0",
@@ -31,6 +34,7 @@
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "serve": "^14.2.6",
+    "sharp": "^0.35.4",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2"
   }
