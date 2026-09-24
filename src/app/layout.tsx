@@ -3,14 +3,13 @@ import localFont from "next/font/local";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { MobileActionBar } from "@/components/MobileActionBar";
-import { RevealObserver, revealBootScript } from "@/components/RevealObserver";
 import { SITE_URL, doctor } from "@/content/site";
 import "./globals.css";
 
 const cormorant = localFont({
   src: [
-    { path: "./fonts/cormorant-garamond-latin-wght-normal.woff2", style: "normal", weight: "300 700" },
-    { path: "./fonts/cormorant-garamond-latin-wght-italic.woff2", style: "italic", weight: "300 700" },
+    { path: "./fonts/cormorant-garamond-latin-wght-normal.woff2", style: "normal", weight: "400 600" },
+    { path: "./fonts/cormorant-garamond-latin-wght-italic.woff2", style: "italic", weight: "400 600" },
   ],
   variable: "--font-cormorant",
   display: "swap",
@@ -19,7 +18,7 @@ const cormorant = localFont({
 
 const manrope = localFont({
   src: "./fonts/manrope-latin-wght-normal.woff2",
-  weight: "200 800",
+  weight: "400 700",
   variable: "--font-manrope",
   display: "swap",
   fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
@@ -43,16 +42,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN" className={`${cormorant.variable} ${manrope.variable}`} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: revealBootScript }} />
-      </head>
+    <html lang="en-IN" className={`${cormorant.variable} ${manrope.variable}`}>
       <body className="pb-[calc(3.9rem+env(safe-area-inset-bottom))] md:pb-0">
         <Navbar />
         <main id="main">{children}</main>
         <Footer />
         <MobileActionBar />
-        <RevealObserver />
       </body>
     </html>
   );

@@ -127,7 +127,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
           </h2>
           <ol className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
             {d.care.map((c, i) => (
-              <li key={c.title} className="border-t border-plum/60 pt-6 lg:mr-8" data-reveal style={{ ["--reveal-delay" as string]: `${i * 80}ms` }}>
+              <li key={c.title} className="border-t border-plum/60 pt-6 lg:mr-8" data-reveal>
                 <span className="text-[0.7rem] font-semibold tracking-[0.16em] text-rose-ink uppercase">Step {i + 1}</span>
                 <h3 className="mt-3 font-serif text-[1.55rem] leading-tight">{c.title}</h3>
                 <p className="mt-3 text-[0.93rem] leading-relaxed text-muted">{c.text}</p>

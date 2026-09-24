@@ -29,7 +29,7 @@ const server = createServer(async (req, res) => {
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? (existsSync(PRE) ? PRE : undefined) });
 const page = await browser.newPage({ viewport: { width: +w, height: +h } });
 await page.goto("http://localhost:4174" + route, { waitUntil: "networkidle" });
-await page.addStyleTag({ content: "*{transition:none!important}html{scroll-behavior:auto!important}" });
+await page.addStyleTag({ content: "*{transition:none!important;animation:none!important}html{scroll-behavior:auto!important}" });
 await page.evaluate(() => document.querySelectorAll("[data-reveal]").forEach((e) => e.classList.add("is-visible")));
 const total = await page.evaluate(() => document.documentElement.scrollHeight);
 const dir = path.resolve("qa-output/shots");

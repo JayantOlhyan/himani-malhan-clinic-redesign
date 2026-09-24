@@ -7,11 +7,7 @@ export function CareCategory({ category, index }: { category: Cat; index: number
   const shown = category.services.slice(0, 4);
   const more = category.services.length - shown.length;
   return (
-    <li
-      className="group relative border-t border-line transition-colors duration-500 hover:bg-paper"
-      data-reveal
-      style={{ ["--reveal-delay" as string]: `${index * 70}ms` }}
-    >
+    <li className="group relative border-t border-line transition-colors duration-500 hover:bg-paper" data-reveal>
       <div className="grid gap-4 py-8 md:grid-cols-12 md:gap-6 md:py-10 md:pr-4">
         <span className="font-serif text-lg text-rose-ink italic md:col-span-1 md:pl-4 md:text-xl" aria-hidden="true">
           {String(index + 1).padStart(2, "0")}
