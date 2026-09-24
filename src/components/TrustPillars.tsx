@@ -4,7 +4,7 @@ import { doctor } from "@/content/site";
 export const pillars = [
   { title: `${doctor.experienceYears}+ Years`, text: "of clinical experience in obstetrics, gynaecology, and fetal & maternal medicine." },
   { title: "Advanced Training", text: `Training and clinical experience at ${doctor.institutions.map((i) => i.short).join(", ")}.` },
-  { title: "Personalized Care", text: "Care plans shaped around each patient's history, circumstances and preferences." },
+  { title: "Personalised Care", text: "Care plans shaped around each patient's history, circumstances and preferences." },
   { title: "Evidence-Based Medicine", text: "Recommendations grounded in current clinical evidence and practice guidelines." },
 ];
 

@@ -26,6 +26,9 @@ export function Navbar() {
   useEffect(() => {
     if (!open) return;
     document.body.style.overflow = "hidden";
+    // Keep keyboard and screen-reader focus inside the open menu.
+    const background = Array.from(document.querySelectorAll<HTMLElement>("#main, body > footer, [data-mobile-actions]"));
+    background.forEach((el) => el.setAttribute("inert", ""));
     panelRef.current?.querySelector<HTMLElement>("a")?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -36,6 +39,7 @@ export function Navbar() {
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = "";
+      background.forEach((el) => el.removeAttribute("inert"));
       window.removeEventListener("keydown", onKey);
     };
   }, [open]);

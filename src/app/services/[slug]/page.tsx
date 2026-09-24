@@ -44,7 +44,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
           "@type": "MedicalWebPage",
           name: s.name,
           url: `${SITE_URL}/services/${s.slug}/`,
-          about: { "@type": "MedicalCondition", name: s.name },
+          about: { "@type": d.schemaType, name: s.name },
           audience: { "@type": "PeopleAudience", audienceType: "Patient" },
           author: { "@id": `${SITE_URL}/#physician` },
         }}
@@ -78,7 +78,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
       <section aria-labelledby="what-title" className="py-20 md:py-24">
         <div className="container-x grid gap-10 lg:grid-cols-12">
           <h2 id="what-title" className="display-3 hyphens-none lg:col-span-5" data-reveal>
-            What is {s.name.toLowerCase().replace(/ treatment$| services$/, "")}?
+            {d.whatIsTitle}
           </h2>
           <div className="space-y-5 text-[1.05rem] leading-relaxed text-muted lg:col-span-6 lg:col-start-7" data-reveal>
             {d.whatIs.map((p) => (
@@ -156,7 +156,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         </div>
       </section>
 
-      <FAQSection faqs={d.faqs} title={`Questions about ${s.name.toLowerCase()}`} />
+      <FAQSection faqs={d.faqs} title={`Questions about ${d.topic}`} />
 
       {related.length > 0 && (
         <nav aria-labelledby="related-title" className="border-t border-line bg-paper py-16">

@@ -16,8 +16,8 @@ export function Hero() {
             Expert Women&rsquo;s Healthcare, <em className="font-normal text-rose-ink italic">From Pregnancy</em> to Every Stage of Life
           </h1>
           <p className="lede mt-7 max-w-[34rem]">
-            {doctor.name} combines {doctor.experienceLabel} of experience in obstetrics, gynecology, and fetal &amp; maternal medicine with
-            personalized, evidence-based care.
+            {doctor.name} combines {doctor.experienceLabel} of experience in obstetrics, gynaecology, and fetal &amp; maternal medicine with
+            personalised, evidence-based care.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Link href="/book/" className="btn btn-primary">
