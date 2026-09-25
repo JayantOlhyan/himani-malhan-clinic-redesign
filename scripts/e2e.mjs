@@ -6,6 +6,7 @@ import { readFile } from "node:fs/promises";
 import { existsSync, statSync } from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
+import { SECURITY_HEADERS } from "./headers.mjs";
 
 const PRE = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome"; // preinstalled in the cloud dev container
 const axeSource = await readFile(createRequire(import.meta.url).resolve("axe-core/axe.min.js"), "utf8");
@@ -26,7 +27,12 @@ const server = createServer(async (req, res) => {
     res.writeHead(404);
     return res.end();
   }
-  res.writeHead(200, { "content-type": T[path.extname(f)] ?? "application/octet-stream" });
+  // Serve with the production security headers so CSP violations surface in tests.
+  res.writeHead(200, {
+    ...SECURITY_HEADERS,
+    "Strict-Transport-Security": "max-age=0",
+    "content-type": T[path.extname(f)] ?? "application/octet-stream",
+  });
   res.end(await readFile(f));
 }).listen(4178);
 const BASE = "http://localhost:4178";
@@ -57,8 +63,17 @@ async function axe(page, context = "document") {
   );
 }
 
+// Collect console errors (including CSP violations) across every test.
+const consoleErrors = [];
+const watch = (ctx) =>
+  ctx.on("page", (p) => {
+    p.on("console", (m) => m.type() === "error" && consoleErrors.push(`${p.url()}: ${m.text()}`));
+    p.on("pageerror", (e) => consoleErrors.push(`${p.url()}: ${e.message}`));
+  });
 const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
 const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+watch(mobile);
+watch(desktop);
 
 await test("mobile menu: opens, contains focus, closes on Escape, restores focus", async () => {
   const p = await mobile.newPage();
@@ -173,6 +188,39 @@ await test("service page: section nav follows scroll and anchors clear the stick
   await p.waitForTimeout(500);
   const current = await p.$eval('nav[aria-label="On this page"] [aria-current="location"]', (a) => a.textContent);
   assert(current === "FAQ", `active item is ${current}`);
+});
+
+await test("CSP: every page loads with production headers and no violations", async () => {
+  const p = await desktop.newPage();
+  const urls = [
+    "/",
+    "/about/",
+    "/expertise/",
+    "/expertise/pregnancy-maternity/",
+    "/services/high-risk-pregnancy/",
+    "/clinics/",
+    "/resources/",
+    "/resources/due-date-calculator/",
+    "/book/",
+    "/privacy/",
+  ];
+  for (const u of urls) {
+    await p.goto(BASE + u, { waitUntil: "networkidle" });
+    assert(await p.evaluate(() => document.querySelector("h1")?.textContent?.length > 0), `no h1 rendered on ${u}`);
+  }
+  // Exercise client navigation + lazy fetches under the CSP too.
+  await p.click('a[href="/clinics/"] >> nth=0');
+  await p.keyboard.press("Control+k");
+  await p.waitForSelector("dialog[open]");
+  await p.keyboard.type("scan");
+  await p.waitForFunction(() => document.querySelectorAll('[role="option"]').length > 0);
+  const csp = consoleErrors.filter((e) => /Content Security Policy|Refused to/i.test(e));
+  assert(!csp.length, csp.slice(0, 3).join(" | "));
+});
+
+await test("no console errors in any test", async () => {
+  // 404s for favicon probes etc. would show here too.
+  assert(!consoleErrors.length, consoleErrors.slice(0, 3).join(" | "));
 });
 
 for (const r of results) console.log(r);

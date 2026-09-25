@@ -15,7 +15,10 @@
     "predev": "node scripts/images.mjs",
     "prebuild": "node scripts/images.mjs",
     "test": "vitest run",
-    "e2e": "node scripts/e2e.mjs"
+    "e2e": "node scripts/e2e.mjs",
+    "headers": "node scripts/headers.mjs",
+    "icons": "node scripts/icons.mjs",
+    "check": "npm run lint && npm test && npm run build && npm run e2e && npm run qa"
   },
   "dependencies": {
     "@fontsource-variable/cormorant-garamond": "^5.3.0",

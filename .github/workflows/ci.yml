@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck + formatting
+        run: npm run lint
+
+      - name: Unit tests (content contract, search, pregnancy dating)
+        run: npm test
+
+      - name: Build (runs image pipeline + content validation)
+        run: npm run build
+
+      - name: Generated headers are up to date
+        run: node scripts/headers.mjs && git diff --exit-code -- public/_headers vercel.json
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end (menu, search, booking, calculator, CSP)
+        run: npm run e2e
+
+      - name: QA sweep (11 viewports, axe, overflow, targets, links)
+        run: npm run qa
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-output
+          path: qa-output/
+          retention-days: 7

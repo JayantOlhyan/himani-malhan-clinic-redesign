@@ -36,7 +36,14 @@ export const metadata: Metadata = {
   applicationName: doctor.name,
   robots: { index: true, follow: true },
   formatDetection: { telephone: false },
-  icons: { icon: "/icon.svg" },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", sizes: "192x192" },
+    ],
+    apple: "/apple-icon.png",
+  },
+  appleWebApp: { title: doctor.shortName, statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
