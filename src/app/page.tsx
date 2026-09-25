@@ -4,6 +4,7 @@ import { DoctorIntro } from "@/components/DoctorIntro";
 import { CareCategories } from "@/components/CareCategories";
 import { SpecialistFeature } from "@/components/SpecialistFeature";
 import { TrustPillars } from "@/components/TrustPillars";
+import { PregnancyPlanner } from "@/components/PregnancyPlanner";
 import { Memberships } from "@/components/Memberships";
 import { ClinicLocations } from "@/components/ClinicLocations";
 import { Testimonials } from "@/components/Testimonials";
@@ -33,6 +34,7 @@ export default function Home() {
       <DoctorIntro />
       <CareCategories />
       <SpecialistFeature />
+      <PregnancyPlanner />
       <TrustPillars />
       <Memberships />
       <ClinicLocations />

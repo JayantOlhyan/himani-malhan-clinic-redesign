@@ -63,6 +63,12 @@ export function buildSearchIndex(): SearchItem[] {
       keywords: `${c.addressLines.join(" ")} ${c.timings.map((t) => `${t.label} ${t.time}`).join(" ")} timings directions`,
     });
   items.push(
+    {
+      title: "Due date calculator",
+      href: "/resources/due-date-calculator/",
+      kind: "Tool",
+      keywords: "pregnancy due date edd weeks pregnant trimester scan timeline nt scan anomaly scan ivf conception calculator",
+    },
     { title: "Book a consultation", href: "/book/", kind: "Page", keywords: "appointment whatsapp call booking" },
     { title: `About ${doctor.name}`, href: "/about/", kind: "Page", keywords: "doctor training experience memberships biography" },
     { title: "Clinics & contact", href: "/clinics/", kind: "Page", keywords: "phone email whatsapp address timings contact" },

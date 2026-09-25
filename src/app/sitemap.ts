@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...detailedServices.map((s) => `/services/${s.slug}/`),
     "/clinics/",
     "/resources/",
+    "/resources/due-date-calculator/",
     "/book/",
   ];
   return paths.map((p) => ({ url: `${SITE_URL}${p}`, changeFrequency: "monthly", priority: p === "/" ? 1 : 0.7 }));

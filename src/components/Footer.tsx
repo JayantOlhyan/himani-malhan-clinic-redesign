@@ -28,6 +28,11 @@ export function Footer() {
                 </li>
               ))}
               <li>
+                <Link className="inline-flex min-h-6 items-center hover:text-ivory" href="/resources/due-date-calculator/">
+                  Due date calculator
+                </Link>
+              </li>
+              <li>
                 <Link className="inline-flex min-h-6 items-center hover:text-ivory" href="/book/">
                   Book Consultation
                 </Link>

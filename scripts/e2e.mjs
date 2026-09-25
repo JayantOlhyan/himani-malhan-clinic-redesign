@@ -137,6 +137,30 @@ await test("booking: validates, preselects clinic, composes WhatsApp message", a
   assert(decodeURIComponent(url).includes("Medsarc Advanced Superspeciality Clinics"), "clinic missing in message");
 });
 
+await test("due date calculator: live result, validation and .ics download", async () => {
+  const p = await mobile.newPage();
+  await p.goto(BASE + "/resources/due-date-calculator/", { waitUntil: "networkidle" });
+  const lmp = await p.evaluate(() => {
+    const n = new Date();
+    const t = new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) - 150 * 86400000);
+    return t.toISOString().slice(0, 10);
+  });
+  await p.fill('input[type="date"]', lmp);
+  await p.waitForSelector("text=Estimated due date");
+  const ga = (await p.textContent('[aria-live="polite"]')).replace(/\s+/g, " ");
+  assert(/21 wk 3 d/.test(ga), `unexpected GA: ${ga.slice(0, 120)}`);
+  assert(/Now/.test(ga), "current milestone not flagged");
+  const [download] = await Promise.all([p.waitForEvent("download"), p.click("text=Add dates to calendar")]);
+  assert(download.suggestedFilename() === "pregnancy-timeline.ics", "wrong filename");
+  const future = await p.evaluate(() => new Date(Date.now() + 5 * 86400000).toISOString().slice(0, 10));
+  await p.fill('input[type="date"]', future);
+  await p.waitForSelector("text=can't be in the future");
+  await p.click("text=IVF transfer");
+  assert(await p.isVisible("text=Embryo age at transfer"), "IVF options missing");
+  const violations = await axe(p);
+  assert(!violations.length, `axe: ${violations.join(", ")}`);
+});
+
 for (const r of results) console.log(r);
 console.log(failures ? `\n${failures} failing` : `\nall ${results.length} passed`);
 await browser.close();
