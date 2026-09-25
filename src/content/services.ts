@@ -14,6 +14,12 @@ export type FAQ = { q: string; a: string };
 
 export type ServiceDetail = {
   review: "pending" | "approved";
+  /** Heading for the explainer section, written out so acronyms and grammar stay correct. */
+  whatIsTitle: string;
+  /** Short topic used in running copy, e.g. "Questions about {topic}". */
+  topic: string;
+  /** schema.org type of the page's subject. */
+  schemaType: "MedicalCondition" | "MedicalProcedure" | "MedicalTherapy";
   intro: string;
   whatIs: string[];
   whoShouldConsult: string[];
@@ -55,6 +61,9 @@ export const categories: CareCategory[] = [
         summary: "Closer monitoring and careful planning when the health of mother or baby needs additional attention.",
         detail: {
           review: "pending",
+          whatIsTitle: "What is a high-risk pregnancy?",
+          topic: "high-risk pregnancy",
+          schemaType: "MedicalCondition",
           intro:
             "Specialist care for pregnancies that need closer monitoring — planned carefully, explained clearly, and adjusted as the pregnancy progresses.",
           whatIs: [
@@ -99,6 +108,9 @@ export const categories: CareCategory[] = [
         summary: "Specialist assessment of the baby's growth, development and wellbeing before birth.",
         detail: {
           review: "pending",
+          whatIsTitle: "What is fetal medicine?",
+          topic: "fetal medicine",
+          schemaType: "MedicalProcedure",
           intro: "Focused assessment of the baby's health during pregnancy, with clear explanations of every finding and what it means for you.",
           whatIs: [
             "Fetal medicine is the part of obstetrics that focuses on the baby before birth — assessing growth and development, screening for certain conditions, and planning care when a concern is identified.",
@@ -160,6 +172,9 @@ export const categories: CareCategory[] = [
         summary: "Preparing your health before conception, especially with existing medical conditions.",
         detail: {
           review: "pending",
+          whatIsTitle: "What is pre-pregnancy counselling?",
+          topic: "pre-pregnancy counselling",
+          schemaType: "MedicalTherapy",
           intro:
             "A consultation before trying to conceive — to prepare your health, review risks, and plan the healthiest possible start to pregnancy.",
           whatIs: [
@@ -193,6 +208,9 @@ export const categories: CareCategory[] = [
         summary: "Evaluation of both partners and a clear, stepwise treatment plan.",
         detail: {
           review: "pending",
+          whatIsTitle: "What is infertility?",
+          topic: "infertility",
+          schemaType: "MedicalCondition",
           intro: "A structured evaluation of why conception has not happened yet, followed by a clear, stepwise plan.",
           whatIs: [
             "Infertility is generally defined as not conceiving after 12 months of regular unprotected intercourse, or after 6 months when the woman is 35 or older.",
@@ -228,6 +246,9 @@ export const categories: CareCategory[] = [
         summary: "Managing cycles, symptoms, fertility and long-term health with PCOS/PCOD.",
         detail: {
           review: "pending",
+          whatIsTitle: "What is PCOS / PCOD?",
+          topic: "PCOS / PCOD",
+          schemaType: "MedicalCondition",
           intro: "Individual management of PCOS/PCOD — for regular cycles, symptom control, fertility, and long-term health.",
           whatIs: [
             "Polycystic ovary syndrome (PCOS, often called PCOD) is a common hormonal condition. It can cause irregular or missed periods, signs of raised androgen levels such as acne or excess hair growth, and polycystic-appearing ovaries on ultrasound.",
@@ -265,6 +286,9 @@ export const categories: CareCategory[] = [
         summary: "Confidential, non-judgemental medical termination of pregnancy within the law.",
         detail: {
           review: "pending",
+          whatIsTitle: "What is medical termination of pregnancy?",
+          topic: "MTP",
+          schemaType: "MedicalProcedure",
           intro: "Confidential and non-judgemental care, with clear information at every step.",
           whatIs: [
             "Medical termination of pregnancy (MTP) is the ending of a pregnancy by medical or surgical methods. In India it is governed by the Medical Termination of Pregnancy Act, and is provided by registered medical practitioners within the limits the Act sets.",
@@ -293,7 +317,7 @@ export const categories: CareCategory[] = [
   },
   {
     slug: "gynecological-health",
-    name: "Gynecological Health",
+    name: "Gynaecological Health",
     navLabel: "Women's Health",
     eyebrow: "Gynaecology",
     description:
@@ -306,6 +330,9 @@ export const categories: CareCategory[] = [
         summary: "Finding the cause of irregular cycles and treating it.",
         detail: {
           review: "pending",
+          whatIsTitle: "When are periods considered irregular?",
+          topic: "irregular periods",
+          schemaType: "MedicalCondition",
           intro: "Understanding why your cycle has changed, and treating the cause rather than only the symptom.",
           whatIs: [
             "Most menstrual cycles last between 21 and 35 days. Periods are considered irregular when the cycle length varies widely, periods are missed, or bleeding is unusually heavy, light, or prolonged.",
@@ -356,6 +383,9 @@ export const categories: CareCategory[] = [
         summary: "Surgical treatment when a gynaecological condition needs it.",
         detail: {
           review: "pending",
+          whatIsTitle: "When is gynaecological surgery needed?",
+          topic: "gynaecological surgery",
+          schemaType: "MedicalProcedure",
           intro: "When surgery is the right option, a careful plan — from the decision to operate through recovery.",
           whatIs: [
             "Some gynaecological conditions, such as certain fibroids, ovarian cysts or endometriosis, may need surgical treatment when symptoms persist or medical treatment is not suitable.",

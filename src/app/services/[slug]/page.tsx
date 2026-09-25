@@ -7,6 +7,7 @@ import { AppointmentCTA } from "@/components/AppointmentCTA";
 import { ImageSlot } from "@/components/ImageSlot";
 import { pillars } from "@/components/TrustPillars";
 import { JsonLd } from "@/components/JsonLd";
+import { SectionNav } from "@/components/SectionNav";
 import { categoryHref, detailedServices } from "@/content/services";
 import { SITE_URL, contact, doctor, telHref } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
@@ -44,7 +45,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
           "@type": "MedicalWebPage",
           name: s.name,
           url: `${SITE_URL}/services/${s.slug}/`,
-          about: { "@type": "MedicalCondition", name: s.name },
+          about: { "@type": d.schemaType, name: s.name },
           audience: { "@type": "PeopleAudience", audienceType: "Patient" },
           author: { "@id": `${SITE_URL}/#physician` },
         }}
@@ -75,10 +76,19 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         }
       />
 
+      <SectionNav
+        links={[
+          { id: "what-title", label: "Overview" },
+          { id: "who-title", label: d.indicationsTitle ?? "Who it's for" },
+          { id: "care-title", label: "Care & treatment" },
+          { id: "why-title", label: `Why ${doctor.shortName}` },
+          { id: "faq-title", label: "FAQ" },
+        ]}
+      />
       <section aria-labelledby="what-title" className="py-20 md:py-24">
         <div className="container-x grid gap-10 lg:grid-cols-12">
           <h2 id="what-title" className="display-3 hyphens-none lg:col-span-5" data-reveal>
-            What is {s.name.toLowerCase().replace(/ treatment$| services$/, "")}?
+            {d.whatIsTitle}
           </h2>
           <div className="space-y-5 text-[1.05rem] leading-relaxed text-muted lg:col-span-6 lg:col-start-7" data-reveal>
             {d.whatIs.map((p) => (
@@ -127,7 +137,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
           </h2>
           <ol className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
             {d.care.map((c, i) => (
-              <li key={c.title} className="border-t border-plum/60 pt-6 lg:mr-8" data-reveal style={{ ["--reveal-delay" as string]: `${i * 80}ms` }}>
+              <li key={c.title} className="border-t border-plum/60 pt-6 lg:mr-8" data-reveal>
                 <span className="text-[0.7rem] font-semibold tracking-[0.16em] text-rose-ink uppercase">Step {i + 1}</span>
                 <h3 className="mt-3 font-serif text-[1.55rem] leading-tight">{c.title}</h3>
                 <p className="mt-3 text-[0.93rem] leading-relaxed text-muted">{c.text}</p>
@@ -156,7 +166,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         </div>
       </section>
 
-      <FAQSection faqs={d.faqs} title={`Questions about ${s.name.toLowerCase()}`} />
+      <FAQSection faqs={d.faqs} title={`Questions about ${d.topic}`} />
 
       {related.length > 0 && (
         <nav aria-labelledby="related-title" className="border-t border-line bg-paper py-16">

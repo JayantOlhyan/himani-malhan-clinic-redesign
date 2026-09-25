@@ -16,8 +16,8 @@ export function Hero() {
             Expert Women&rsquo;s Healthcare, <em className="font-normal text-rose-ink italic">From Pregnancy</em> to Every Stage of Life
           </h1>
           <p className="lede mt-7 max-w-[34rem]">
-            {doctor.name} combines {doctor.experienceLabel} of experience in obstetrics, gynecology, and fetal &amp; maternal medicine with
-            personalized, evidence-based care.
+            {doctor.name} combines {doctor.experienceLabel} of experience in obstetrics, gynaecology, and fetal &amp; maternal medicine with
+            personalised, evidence-based care.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Link href="/book/" className="btn btn-primary">
@@ -52,7 +52,7 @@ export function Hero() {
             tone="ivory"
             priority
             position="center top"
-            sizes="(min-width: 1024px) 40vw, 100vw"
+            sizes="(min-width: 1024px) 40vw, (min-width: 768px) 70vw, 100vw"
             className="relative aspect-[4/5] w-full lg:aspect-[6/7]"
           />
           <div className="relative -mt-14 mr-10 ml-4 border border-line bg-paper px-6 py-5 shadow-[0_18px_40px_-24px_rgb(74_38_55/0.35)] sm:mr-auto sm:ml-8 sm:max-w-sm">

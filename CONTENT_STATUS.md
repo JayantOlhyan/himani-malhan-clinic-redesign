@@ -46,10 +46,19 @@ These are conservative, general patient-education texts. They make **no claims a
 The 20 services without a `detail` block **do not get pages**. They are listed but not linked, to avoid 20 thin pages that would hurt SEO.
 Adding a `detail` block publishes a page at `/services/<slug>/` automatically.
 
+## Clinical reference content (needs the doctor's sign-off)
+
+- **Due-date calculator** (`src/lib/pregnancy.ts`). The EDD rules follow ACOG Committee Opinion 700 (LMP + 280 days adjusted for cycle length; conception + 266; IVF day-5 + 261, day-3 + 263).
+  Scan windows: early scan 6–9+6 wk (if advised), NT/first-trimester screening 11+0–13+6 (ISUOG), anomaly scan 18–22+6 (ISUOG), glucose screening 24–28+6,
+  growth scan 28–32+6 (if advised), term from 37 wk. **Confirm these match the practice's own antenatal schedule** (e.g. Indian practice often
+  also tests glucose at booking, per DIPSI/FOGSI; the UI says "earlier testing may also be advised").
+- **Search synonyms** (`src/lib/search.ts → SYNONYMS`) map patient words to site terms, e.g. pcod → pcos, c-section → caesarean, ivf → infertility.
+
 ## Deliberately absent
 
 - **Testimonials.** None verified. The section shows a clearly labelled placeholder until real, consented reviews are added to `testimonials` in `site.ts`.
-- **Photography.** No client photos were reachable. Every image slot renders a labelled brand placeholder until the file exists — see README.
+- **Photography.** No client photos were reachable. Every image slot renders a labelled brand placeholder until a photo is added to `assets/photos/` (see README).
+  The home fetal-medicine feature uses abstract ultrasound-sector artwork, not a photo. It is not a real scan and shows no measurements.
 - **Membership logos.** Typographic treatment until official logo files are supplied.
 - **Lorem ipsum.** None. The QA script fails if any appears.
 - Awards, patient numbers, success rates, review counts: none shown.

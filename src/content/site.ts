@@ -112,6 +112,5 @@ export const testimonials: Testimonial[] = [];
 export const images = {
   heroPortrait: { src: "/images/dr-himani-kundoo-portrait.jpg", alt: "Dr. Himani Kundoo, obstetrician and gynaecologist in Gurugram" },
   doctorDesk: { src: "/images/dr-himani-kundoo-consultation.jpg", alt: "Dr. Himani Kundoo in the consultation room" },
-  highRisk: { src: "/images/high-risk-pregnancy.jpg", alt: "Pregnancy ultrasound assessment" },
   about: { src: "/images/dr-himani-kundoo-about.jpg", alt: "Dr. Himani Kundoo" },
 } as const;

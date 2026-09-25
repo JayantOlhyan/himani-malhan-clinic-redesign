@@ -26,6 +26,8 @@
 
 @layer base {
   html {
+    /* 16px up to ~1600px wide, then scales to 18px so large displays aren't a small island. Respects user font size. */
+    font-size: clamp(100%, 0.35rem + 0.66vw, 112.5%);
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
     scroll-padding-top: 6rem;
@@ -43,6 +45,10 @@
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
     overflow-x: clip;
+  }
+  /* Anchored section headings clear the sticky header + in-page nav. */
+  [id$="-title"] {
+    scroll-margin-top: 8.5rem;
   }
   h1,
   h2,
@@ -163,6 +169,13 @@
   .btn:hover svg {
     transform: translateX(3px);
   }
+  /* Long labels may wrap on very narrow phones instead of overflowing. */
+  @media (max-width: 399px) {
+    .btn {
+      white-space: normal;
+      text-align: center;
+    }
+  }
   .btn-primary {
     background: var(--color-plum);
     color: var(--color-ivory);
@@ -231,6 +244,54 @@
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.29 0 0 0 0 0.15 0 0 0 0 0.21 0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   }
 
+  .kbd {
+    display: inline-flex;
+    min-width: 1.4rem;
+    justify-content: center;
+    border: 1px solid var(--color-line-strong);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 0 0.3rem;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    color: var(--color-plum);
+    background: var(--color-paper);
+  }
+
+  /* Search dialog: fade/scale in where supported. */
+  .search-dialog[open] {
+    animation: dialog-in 0.25s var(--ease-editorial);
+  }
+  @keyframes dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.99);
+    }
+  }
+
+  /* Ultrasound-sector artwork (SonarVisual). */
+  @media (prefers-reduced-motion: no-preference) {
+    .sonar-sweep {
+      animation: sonar-sweep 7s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+    }
+    .sonar-dot {
+      animation: sonar-pulse 2.4s ease-in-out infinite;
+    }
+  }
+  @keyframes sonar-sweep {
+    from {
+      transform: rotate(-31deg);
+    }
+    to {
+      transform: rotate(31deg);
+    }
+  }
+  @keyframes sonar-pulse {
+    50% {
+      opacity: 0.25;
+    }
+  }
+
   /* Accordion */
   .faq summary {
     list-style: none;
@@ -255,28 +316,43 @@
   }
 }
 
-/* Scroll reveal: content is visible by default; JS opts in by adding .js to <html>. */
-.js [data-reveal] {
-  opacity: 0;
-  transform: translateY(18px);
-  transition:
-    opacity 0.9s var(--ease-editorial),
-    transform 0.9s var(--ease-editorial);
-  transition-delay: var(--reveal-delay, 0ms);
+/*
+ * Scroll reveal with CSS scroll-driven animations — no JavaScript.
+ * Progressive enhancement: browsers without animation-timeline (or users who prefer
+ * reduced motion) simply see the content. Nothing can get stuck hidden.
+ */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
-.js [data-reveal].is-visible {
-  opacity: 1;
-  transform: none;
+@keyframes reveal-clip {
+  from {
+    opacity: 0.4;
+    clip-path: inset(0 0 16% 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+  }
 }
-.js [data-reveal="image"] {
-  transform: none;
-  clip-path: inset(0 0 12% 0);
-  transition:
-    opacity 1s var(--ease-editorial),
-    clip-path 1.2s var(--ease-editorial);
-}
-.js [data-reveal="image"].is-visible {
-  clip-path: inset(0 0 0 0);
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal] {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 70%;
+    }
+    [data-reveal="image"] {
+      animation-name: reveal-clip;
+      animation-range: entry 0% cover 35%;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -287,10 +363,5 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-  .js [data-reveal] {
-    opacity: 1 !important;
-    transform: none !important;
-    clip-path: none !important;
   }
 }

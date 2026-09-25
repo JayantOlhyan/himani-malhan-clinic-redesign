@@ -11,6 +11,29 @@ const tones: Record<Tone, { bg: string; ink: string; frame: string }> = {
   sage: { bg: "bg-sage-soft", ink: "text-sage-ink", frame: "border-plum/10" },
 };
 
+type ManifestEntry = {
+  width: number;
+  height: number;
+  fallback: string;
+  blurDataURL: string;
+  sources: Record<"avif" | "webp", [string, number][]>;
+};
+
+let manifestCache: Record<string, ManifestEntry> | undefined;
+/** Build-time manifest written by scripts/images.mjs. Missing manifest = no processed photos. */
+function manifest(): Record<string, ManifestEntry> {
+  if (!manifestCache) {
+    try {
+      manifestCache = JSON.parse(fs.readFileSync(path.join(process.cwd(), "src/content/image-manifest.json"), "utf8"));
+    } catch {
+      manifestCache = {};
+    }
+  }
+  return manifestCache!;
+}
+
+const keyOf = (src: string) => path.basename(src).replace(/\.[^.]+$/, "");
+
 export function publicFileExists(src: string) {
   try {
     return fs.existsSync(path.join(process.cwd(), "public", src));
@@ -20,9 +43,11 @@ export function publicFileExists(src: string) {
 }
 
 /**
- * Renders the client photograph when `public${src}` exists at build time;
- * otherwise a designed, clearly-labelled placeholder. Drop the real file in and rebuild — no code change.
- * The wrapper controls size/aspect via className.
+ * Photo slot, resolved at build time in this order:
+ *   1. a processed photo from assets/photos/<key>.* → <picture> with AVIF/WebP srcset, intrinsic size and blur-up
+ *   2. a plain file at public${src}                  → <img>
+ *   3. otherwise                                      → a designed, clearly-labelled placeholder
+ * The wrapper controls size/aspect via className; `sizes` should describe the rendered width.
  */
 export function ImageSlot({
   src,
@@ -45,6 +70,33 @@ export function ImageSlot({
 }) {
   const t = tones[tone];
   const pos = /(^|\s)absolute(\s|$)/.test(className) ? "" : "relative";
+  const processed = manifest()[keyOf(src)];
+  if (processed) {
+    const srcSet = (fmt: "avif" | "webp") => processed.sources[fmt].map(([u, w]) => `${u} ${w}w`).join(", ");
+    return (
+      <div
+        className={`${pos} overflow-hidden bg-cover bg-center ${className}`}
+        style={{ backgroundImage: `url(${processed.blurDataURL})`, backgroundPosition: position }}
+      >
+        <picture>
+          <source type="image/avif" srcSet={srcSet("avif")} sizes={sizes} />
+          <source type="image/webp" srcSet={srcSet("webp")} sizes={sizes} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={processed.fallback}
+            alt={alt}
+            width={processed.width}
+            height={processed.height}
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
+            decoding={priority ? "sync" : "async"}
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: position }}
+          />
+        </picture>
+      </div>
+    );
+  }
   if (publicFileExists(src)) {
     return (
       <div className={`${pos} overflow-hidden ${className}`}>

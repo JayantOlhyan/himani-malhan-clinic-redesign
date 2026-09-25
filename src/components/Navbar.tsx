@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Menu, Phone, X } from "lucide-react";
+import { ArrowRight, Menu, Phone, Search, X } from "lucide-react";
+import { openSearch } from "./SearchDialog";
 import { Logo } from "./Logo";
 import { contact, nav, telHref } from "@/content/site";
 
@@ -11,6 +12,11 @@ export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // Rendered after mount to avoid a hydration mismatch; Apple platforms use ⌘, everything else Ctrl.
+  const [shortcut, setShortcut] = useState("Ctrl K");
+  useEffect(() => {
+    if (/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)) setShortcut("⌘K");
+  }, []);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -26,6 +32,9 @@ export function Navbar() {
   useEffect(() => {
     if (!open) return;
     document.body.style.overflow = "hidden";
+    // Keep keyboard and screen-reader focus inside the open menu.
+    const background = Array.from(document.querySelectorAll<HTMLElement>("#main, body > footer, [data-mobile-actions]"));
+    background.forEach((el) => el.setAttribute("inert", ""));
     panelRef.current?.querySelector<HTMLElement>("a")?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -36,6 +45,7 @@ export function Navbar() {
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = "";
+      background.forEach((el) => el.removeAttribute("inert"));
       window.removeEventListener("keydown", onKey);
     };
   }, [open]);
@@ -55,7 +65,7 @@ export function Navbar() {
         >
           Skip to content
         </a>
-        <div className="container-x flex h-[4.5rem] items-center justify-between gap-6 lg:h-20">
+        <div className="container-x flex h-[4.5rem] items-center justify-between gap-3 sm:gap-6 lg:h-20">
           <Logo />
           <nav aria-label="Primary" className="hidden xl:block">
             <ul className="flex items-center gap-6 xl:gap-8">
@@ -75,10 +85,24 @@ export function Navbar() {
             </ul>
           </nav>
           <div className="flex items-center gap-2">
-            <a href={telHref} className="hidden items-center gap-2 px-3 text-[0.84rem] font-medium whitespace-nowrap text-plum 2xl:inline-flex">
+            <a
+              href={telHref}
+              className="hidden min-h-11 items-center gap-2 px-3 text-[0.84rem] font-medium whitespace-nowrap text-plum 2xl:inline-flex"
+            >
               <Phone className="h-4 w-4" aria-hidden="true" />
               {contact.phoneDisplay}
             </a>
+            <button
+              type="button"
+              onClick={openSearch}
+              aria-label="Search the site"
+              aria-keyshortcuts="Control+K Meta+K /"
+              className="inline-flex h-11 min-w-11 items-center justify-center gap-2 border-line-strong px-2 text-plum transition-colors hover:border-plum xl:border xl:px-3"
+            >
+              <Search className="h-[18px] w-[18px]" aria-hidden="true" />
+              <span className="hidden text-[0.8rem] text-muted xl:inline">Search</span>
+              <kbd className="kbd hidden xl:inline-flex">{shortcut}</kbd>
+            </button>
             <Link href="/book/" className="btn btn-primary hidden !min-h-11 !px-5 sm:inline-flex">
               Book Consultation
             </Link>

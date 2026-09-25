@@ -16,7 +16,7 @@ export function ServiceCard({ service }: { service: Service }) {
     </>
   );
   return (
-    <li className="border-b border-line">
+    <li id={service.slug} className="scroll-mt-28 border-b border-line">
       {service.detail ? (
         <Link
           href={`/services/${service.slug}/`}

@@ -4,17 +4,13 @@ import { doctor } from "@/content/site";
 export const pillars = [
   { title: `${doctor.experienceYears}+ Years`, text: "of clinical experience in obstetrics, gynaecology, and fetal & maternal medicine." },
   { title: "Advanced Training", text: `Training and clinical experience at ${doctor.institutions.map((i) => i.short).join(", ")}.` },
-  { title: "Personalized Care", text: "Care plans shaped around each patient's history, circumstances and preferences." },
+  { title: "Personalised Care", text: "Care plans shaped around each patient's history, circumstances and preferences." },
   { title: "Evidence-Based Medicine", text: "Recommendations grounded in current clinical evidence and practice guidelines." },
 ];
 
 export function TrustPillar({ title, text, index }: { title: string; text: string; index: number }) {
   return (
-    <li
-      className="border-t border-line pt-6 lg:border-t-0 lg:border-l lg:px-8 lg:pt-0 lg:first:border-l-0 lg:first:pl-0"
-      data-reveal
-      style={{ ["--reveal-delay" as string]: `${index * 80}ms` }}
-    >
+    <li className="border-t border-line pt-6 lg:border-t-0 lg:border-l lg:px-8 lg:pt-0 lg:first:border-l-0 lg:first:pl-0" data-reveal>
       <span className="font-serif text-sm text-rose-ink italic" aria-hidden="true">
         {["i", "ii", "iii", "iv"][index]}.
       </span>

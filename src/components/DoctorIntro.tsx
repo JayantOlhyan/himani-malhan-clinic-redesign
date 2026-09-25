@@ -21,7 +21,7 @@ export function DoctorIntro() {
   return (
     <section aria-labelledby="doctor-title" className="py-20 md:py-28">
       <div className="container-x grid gap-12 lg:grid-cols-12 lg:gap-10">
-        <div className="relative self-start lg:col-span-5" data-reveal="image">
+        <div className="relative self-start md:mx-auto md:w-[70%] lg:col-span-5 lg:w-full" data-reveal="image">
           <div className="absolute -bottom-5 -left-5 hidden h-2/3 w-2/3 bg-sage-soft md:block" aria-hidden="true" />
           <ImageSlot
             src={images.doctorDesk.src}

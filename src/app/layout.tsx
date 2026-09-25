@@ -3,14 +3,18 @@ import localFont from "next/font/local";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { MobileActionBar } from "@/components/MobileActionBar";
-import { RevealObserver, revealBootScript } from "@/components/RevealObserver";
+import { SearchDialog } from "@/components/SearchDialog";
 import { SITE_URL, doctor } from "@/content/site";
+import { validateContent } from "@/content/validate";
 import "./globals.css";
+
+// Fail the build on malformed content (server-only; runs once at build time).
+validateContent();
 
 const cormorant = localFont({
   src: [
-    { path: "./fonts/cormorant-garamond-latin-wght-normal.woff2", style: "normal", weight: "300 700" },
-    { path: "./fonts/cormorant-garamond-latin-wght-italic.woff2", style: "italic", weight: "300 700" },
+    { path: "./fonts/cormorant-garamond-latin-wght-normal.woff2", style: "normal", weight: "400 600" },
+    { path: "./fonts/cormorant-garamond-latin-wght-italic.woff2", style: "italic", weight: "400 600" },
   ],
   variable: "--font-cormorant",
   display: "swap",
@@ -19,7 +23,7 @@ const cormorant = localFont({
 
 const manrope = localFont({
   src: "./fonts/manrope-latin-wght-normal.woff2",
-  weight: "200 800",
+  weight: "400 700",
   variable: "--font-manrope",
   display: "swap",
   fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
@@ -32,7 +36,14 @@ export const metadata: Metadata = {
   applicationName: doctor.name,
   robots: { index: true, follow: true },
   formatDetection: { telephone: false },
-  icons: { icon: "/icon.svg" },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", sizes: "192x192" },
+    ],
+    apple: "/apple-icon.png",
+  },
+  appleWebApp: { title: doctor.shortName, statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
@@ -43,16 +54,13 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN" className={`${cormorant.variable} ${manrope.variable}`} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: revealBootScript }} />
-      </head>
+    <html lang="en-IN" className={`${cormorant.variable} ${manrope.variable}`}>
       <body className="pb-[calc(3.9rem+env(safe-area-inset-bottom))] md:pb-0">
         <Navbar />
         <main id="main">{children}</main>
         <Footer />
         <MobileActionBar />
-        <RevealObserver />
+        <SearchDialog />
       </body>
     </html>
   );

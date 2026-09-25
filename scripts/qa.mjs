@@ -40,7 +40,11 @@ const server = createServer(async (req, res) => {
 }).listen(4173);
 const BASE = "http://localhost:4173";
 
-const widths = (process.env.WIDTHS ?? "390,430,768,1024,1440,1920").split(",").map(Number);
+// width x height. Includes small Android (320/360), iPhone (390/430), landscape phone, tablet, laptop and 1440p.
+const viewports = (process.env.VIEWPORTS ?? "320x640,360x780,390x844,430x932,844x390,768x1024,1024x768,1280x800,1440x900,1920x1080,2560x1440")
+  .split(",")
+  .map((v) => v.split("x").map(Number));
+const shotWidths = (process.env.SHOT_WIDTHS ?? "390,1440").split(",").map(Number);
 const onlyShots = process.env.SHOTS; // comma list of paths to screenshot (default: all)
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? (existsSync(PRE) ? PRE : undefined) });
 const problems = [];
@@ -67,8 +71,8 @@ while (queue.length) {
 console.log(`Crawled ${seen.size} internal URLs`);
 
 // 2. Per-page, per-width checks
-for (const w of widths) {
-  const ctx = await browser.newContext({ viewport: { width: w, height: w < 768 ? 844 : 900 }, deviceScaleFactor: 1 });
+for (const [w, h] of viewports) {
+  const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1, hasTouch: w < 1024 });
   const page = await ctx.newPage();
   page.on("console", (m) => m.type() === "error" && problems.push(`CONSOLE ${w}px ${page.url()}: ${m.text()}`));
   page.on("pageerror", (e) => problems.push(`PAGEERROR ${w}px ${page.url()}: ${e.message}`));
@@ -86,6 +90,17 @@ for (const w of widths) {
       for (const el of document.querySelectorAll("body *")) {
         const r = el.getBoundingClientRect();
         if (r.width && (r.right > vw + 1 || r.left < -1) && getComputedStyle(el).position !== "fixed") {
+          // Content inside an intentional scroller/clipper that itself fits the viewport is fine.
+          let clipped = false;
+          for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+            const ox = getComputedStyle(p).overflowX;
+            const pr = p.getBoundingClientRect();
+            if (ox !== "visible" && pr.right <= vw + 1 && pr.left >= -1) {
+              clipped = true;
+              break;
+            }
+          }
+          if (clipped) continue;
           if (!el.closest("[hidden]")) bad.push(`${el.tagName.toLowerCase()}.${String(el.className).slice(0, 60)} r=${Math.round(r.right)}`);
         }
       }
@@ -102,7 +117,24 @@ for (const w of widths) {
       return out.slice(0, 3);
     });
     if (tiny.length) problems.push(`TINYTEXT ${w}px ${u}: ${tiny.join(" | ")}`);
-    if (w === 1440 || w === 390) {
+    // WCAG 2.2 SC 2.5.8 target size (minimum 24x24 CSS px); inline links inside running text are exempt.
+    const small = await page.evaluate(() => {
+      const out = [];
+      for (const el of document.querySelectorAll("a[href], button, input:not([type=hidden]), select, textarea, summary")) {
+        if (el.closest("[hidden], [inert], .sr-only") || el.classList.contains("sr-only")) continue;
+        if (el.closest("p, address, dd, li > span") && getComputedStyle(el).display === "inline") continue;
+        const r = el.getBoundingClientRect();
+        if (!r.width || !r.height) continue;
+        if (el.type === "radio" || el.type === "checkbox") continue; // wrapped in a full-size <label>
+        if (r.width < 24 || r.height < 24)
+          out.push(
+            `${el.tagName.toLowerCase()} ${Math.round(r.width)}x${Math.round(r.height)} "${(el.textContent || el.getAttribute("aria-label") || "").trim().slice(0, 24)}"`,
+          );
+      }
+      return out.slice(0, 4);
+    });
+    if (small.length) problems.push(`TARGET ${w}px ${u}: ${small.join(" | ")}`);
+    if ((w === 1440 || w === 390) && h !== 390) {
       await page.addScriptTag({ content: axeSource });
       const res = await page.evaluate(async () =>
         (await window.axe.run(document, { runOnly: ["wcag2a", "wcag2aa", "wcag21aa", "best-practice"] })).violations.map(
@@ -111,7 +143,7 @@ for (const w of widths) {
       );
       for (const v of res) problems.push(`AXE ${w}px ${u}: ${v}`);
     }
-    if (!onlyShots || onlyShots.split(",").includes(u)) {
+    if (shotWidths.includes(w) && (!onlyShots || onlyShots.split(",").includes(u))) {
       const name = (u === "/" ? "home" : u.replace(/\//g, "_").replace(/^_|_$/g, "")) + `-${w}.png`;
       await page.screenshot({ path: path.join(SHOTS, name), fullPage: true });
     }
@@ -131,3 +163,4 @@ await browser.close();
 server.close();
 console.log(problems.length ? problems.join("\n") : "No problems found");
 console.log(`${problems.length} problem(s)`);
+process.exit(problems.length ? 1 : 0);

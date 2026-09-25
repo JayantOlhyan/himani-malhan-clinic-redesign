@@ -1,77 +1,88 @@
-# Dr. Himani Kundoo — website redesign (demo)
+# Dr. Himani Kundoo — website redesign
 
-Premium editorial redesign for Dr. Himani Kundoo, Obstetrician & Gynaecologist, Fetal & Maternal Medicine Specialist, Gurugram.
+Editorial, privacy-first website for Dr. Himani Kundoo, Obstetrician & Gynaecologist, Fetal & Maternal Medicine Specialist, Gurugram.
 
-**Before showing this to the client, read [`CONTENT_STATUS.md`](./CONTENT_STATUS.md).** It lists what is verified, what is drafted, and what still needs confirmation.
+**Before showing this to the client, read [`CONTENT_STATUS.md`](./CONTENT_STATUS.md).** It lists what is verified, what is drafted and what still needs confirmation.
 
 ## Stack
 
-Next.js 16 (App Router, **static export**) · React 19 · TypeScript · Tailwind CSS v4 · self-hosted Cormorant Garamond + Manrope · lucide icons.
-No backend and no tracking. Output is plain static HTML in `out/`, which deploys to Vercel, Netlify, S3 or GitHub Pages.
+Next.js 16 (App Router, **static export**) · React 19 · TypeScript (strict) · Tailwind CSS v4 (container queries) · zod (build-time only) ·
+sharp (image pipeline) · Vitest · Playwright + axe-core. Self-hosted, subset Cormorant Garamond + Manrope. No backend, no cookies, no tracking.
 
 ```bash
 npm install
-npm run dev          # http://localhost:3000
-npm run build        # static site → out/
-npm start            # serve out/
-npm run lint         # typecheck + prettier check
-npm run qa           # crawl + overflow/a11y/console/link checks at 390–1920px, screenshots → qa-output/
-npm run import:source  # pull live-site text + images into content-source/ (needs normal network)
+npm run dev        # http://localhost:3000 (runs the image pipeline first)
+npm run build      # static site → out/  (image pipeline + content validation)
+npm start          # serve out/
+npm run check      # everything CI runs: lint, unit tests, build, e2e, QA sweep
 ```
+
+| Script | What it does |
+| --- | --- |
+| `npm run lint` | `tsc --noEmit` + Prettier check |
+| `npm test` | Vitest: content contract, search ranking, pregnancy-dating maths |
+| `npm run e2e` | Playwright: mobile menu focus, ⌘K search, booking, due-date calculator + .ics, section nav, CSP (with production headers) |
+| `npm run qa` | Crawls every page at 11 viewports (320 → 2560, including landscape): overflow, axe WCAG 2.2 AA, 24px targets, tiny text, console errors, broken links, Lorem ipsum. Exits 1 on any problem |
+| `scripts/lighthouse.sh [paths]` | Lighthouse mobile + desktop against the build |
+| `npm run images` | Photos in `assets/photos/` → AVIF/WebP srcsets + blur previews |
+| `npm run headers` | Regenerate `public/_headers` + `vercel.json` from `scripts/headers.mjs` |
+| `npm run icons` / `node scripts/og.mjs` | Regenerate app icons / Open Graph image |
+| `npm run import:source` | Pull the live site's text + images into `content-source/` (needs normal network) |
 
 Set `NEXT_PUBLIC_SITE_URL` for canonical URLs, sitemap and OG tags (defaults to `https://drhimanikundoogynae.com`).
 
-## Where things live
+## Architecture
 
 ```
-src/content/site.ts       doctor, contact, clinics, memberships, nav, testimonials, image paths  ← single source of truth
-src/content/services.ts   4 care categories → 28 services; `detail` block = dedicated page
-src/content/faqs.ts       general FAQ
-src/components/           Navbar, Hero, TrustStrip, DoctorIntro, CareCategories/CareCategory, ServiceCard,
-                          SpecialistFeature, TrustPillars/TrustPillar, Memberships, ClinicCard, ClinicLocations,
-                          Testimonials, FAQAccordion/FAQSection, AppointmentCTA, Footer, MobileActionBar,
-                          BookingForm, PageHero, Breadcrumbs, ImageSlot, JsonLd
-src/app/                  routes (see below), sitemap.ts, robots.ts
-src/lib/                  metadata + structured data helpers
-scripts/                  qa.mjs, shots.mjs, og.mjs, import-source.mjs
+src/content/        ← all practice facts and copy (typed)
+  site.ts             doctor, contact, clinics, memberships, nav, testimonials, image slots
+  services.ts         4 care categories → 28 services; a `detail` block publishes /services/<slug>/
+  faqs.ts             general FAQ
+  validate.ts         zod contract, run by the root layout — bad content fails the build
+src/lib/
+  pregnancy.ts        pure due-date / gestational-age / scan-window maths + .ics export (ACOG CO 700, ISUOG)
+  search.ts           search index builder + ranking (with patient-vocabulary synonyms)
+  seo.ts, schema.ts   metadata + JSON-LD
+src/components/     server components by default; client islands only where needed:
+                    Navbar, SearchDialog, BookingForm, PregnancyCalculator, SectionNav
+src/app/            routes, sitemap.ts, robots.ts, manifest.ts, search-index.json (static)
+scripts/            qa, e2e, lighthouse, images, headers, icons, og, subset-fonts, import-source
+tests/              Vitest unit tests
 ```
 
-Routes: `/` · `/about/` · `/expertise/` · `/expertise/[category]/` (4) · `/services/[slug]/` (8 with content) · `/clinics/` · `/resources/` · `/book/` · `/privacy/`
+Routes: `/` · `/about/` · `/expertise/` · `/expertise/[category]/` (4) · `/services/[slug]/` (8 with content) · `/clinics/` ·
+`/resources/` · `/resources/due-date-calculator/` · `/book/` · `/privacy/` · `/search-index.json` · `/manifest.webmanifest`
+
+### Scaling content
+
+- **New service page:** add a `detail` block to the service in `services.ts`. The page, sitemap entry, search entry and JSON-LD follow automatically. The zod contract tells you what's missing.
+- **New clinic:** add it to `clinics` in `site.ts`. Cards, footer, booking options, schema and search pick it up.
+- **Testimonials:** add verified, consented reviews to `testimonials`. The section switches from placeholder to quotes.
+- **Photos:** see below.
+
+### Features
+
+- **⌘K / Ctrl+K / "/" search** over services, questions and clinics. The 17 KB index is fetched on first open; it's a native `<dialog>` with the ARIA combobox pattern.
+- **Due-date calculator** (home + `/resources/due-date-calculator/`): LMP, conception or IVF (day 3/5), gestational age, trimester track, scan and test windows, `.ics` export. Runs on the device only.
+- **Booking** composes a WhatsApp or email message; nothing is stored. Clinic cards deep-link with the clinic preselected. On mobile there's a fixed **Call · WhatsApp · Book** bar.
+- **Service pages** have a sticky "On this page" bar with scroll-spy.
+- **Motion:** CSS scroll-driven reveals (`animation-timeline: view()`), no JS; off for reduced-motion users and invisible where unsupported. The ultrasound-sector artwork is pure SVG/CSS.
 
 ## Adding the client's photographs
 
-Every photo slot uses `ImageSlot`. At build time it checks whether the file exists in `public/`. If it does, the real image renders;
-if not, a labelled brand placeholder renders instead. **Drop in the files and rebuild. No code changes.**
+Put originals in `assets/photos/` named after the slot (see `assets/photos/README.md`), then `npm run build`. Each photo becomes AVIF + WebP at
+480–2000w with intrinsic dimensions and a blurred preview, rendered through `<picture>`. Without a photo, each slot shows a labelled brand placeholder.
 
-| File | Used for |
-| --- | --- |
-| `public/images/dr-himani-kundoo-portrait.jpg` | Home hero (portrait, ~4:5, face in upper third) |
-| `public/images/dr-himani-kundoo-consultation.jpg` | Home "Meet Dr. Kundoo" |
-| `public/images/dr-himani-kundoo-about.jpg` | About page |
-| `public/images/high-risk-pregnancy.jpg` | Home specialist feature |
-| `public/images/clinic-miracles.jpg`, `clinic-medsarc.jpg` | Clinic cards (16:9) |
-| `public/images/category-{pregnancy,fertility,gynecology,wellness}.jpg` | Category pages |
-| `public/images/service-<slug>.jpg` | Service pages |
-| `public/images/logo-{fogsi,gogs,sfm}.png` | Membership logos (official files only) |
+## Deployment
 
-Export JPEGs at about 1600px on the long edge, quality 75–80. The static export does not optimise images at build time.
+Any static host. `vercel.json` (Vercel) and `public/_headers` (Netlify, Cloudflare Pages) carry the security headers: a strict same-origin CSP,
+HSTS, nosniff, Referrer-Policy, Permissions-Policy and COOP, plus cache rules. The CSP has to allow inline scripts because Next.js static
+export emits them; everything else is same-origin only.
 
-## Booking
+## Quality status (last run)
 
-There is no booking backend. `/book/` builds a message and opens **WhatsApp** (or email) addressed to the practice. Nothing is stored.
-Clinic cards deep-link to `/book/?clinic=<id>` to preselect the clinic. On mobile, a fixed **Call · WhatsApp · Book** bar is always visible.
-
-## SEO
-
-Per-page title, description, canonical, OpenGraph and Twitter tags. `sitemap.xml` and `robots.txt` are generated.
-JSON-LD covers `Physician` + `MedicalClinic` (home, about, clinics), `FAQPage` wherever an FAQ renders, `BreadcrumbList` on inner pages,
-and `MedicalWebPage` on service pages. Opening hours are left out of the schema because the source lists no days.
-The OG image is `public/og.png`, regenerated by `node scripts/og.mjs`.
-
-## QA status (last run)
-
-- 19 URLs × 6 widths (390, 430, 768, 1024, 1440, 1920): no horizontal overflow, no console errors, no broken internal links,
-  0 axe-core violations (WCAG 2.1 AA + best practice), no text under 11px, no Lorem ipsum.
-- Lighthouse, home: desktop 100 / 100 / 100 / 100. Mobile 93 perf, 100 a11y / best practices / SEO. Mobile LCP is 2.7s on simulated slow 4G;
-  the LCP element is the serif hero headline, which waits for its web font.
-- Manually verified: mobile menu (focus, Escape, route change), booking validation and WhatsApp message, `tel:` links, Maps links.
+- **CI** (`.github/workflows/ci.yml`): lint → unit tests → build → headers drift check → e2e → QA sweep.
+- **Unit:** 26 tests. **E2E:** 10 flows, including CSP under production headers. **QA:** 20 URLs × 11 viewports, 0 problems (axe WCAG 2.2 AA included).
+- **Lighthouse** (simulated): desktop 100/100/100/100 on home, service and calculator pages. Mobile performance 96–99; accessibility, best practices and SEO 100; CLS 0.
+  Mobile LCP is 2.1–2.7s on the throttled profile while FCP is 0.9s. The gap is the simulator charging the framework JS and fonts to the LCP text node,
+  not a late render. Confirm real-user LCP with field data (CrUX / Search Console) after launch.
