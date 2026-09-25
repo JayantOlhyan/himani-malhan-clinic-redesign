@@ -90,6 +90,17 @@ for (const [w, h] of viewports) {
       for (const el of document.querySelectorAll("body *")) {
         const r = el.getBoundingClientRect();
         if (r.width && (r.right > vw + 1 || r.left < -1) && getComputedStyle(el).position !== "fixed") {
+          // Content inside an intentional scroller/clipper that itself fits the viewport is fine.
+          let clipped = false;
+          for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+            const ox = getComputedStyle(p).overflowX;
+            const pr = p.getBoundingClientRect();
+            if (ox !== "visible" && pr.right <= vw + 1 && pr.left >= -1) {
+              clipped = true;
+              break;
+            }
+          }
+          if (clipped) continue;
           if (!el.closest("[hidden]")) bad.push(`${el.tagName.toLowerCase()}.${String(el.className).slice(0, 60)} r=${Math.round(r.right)}`);
         }
       }
@@ -152,3 +163,4 @@ await browser.close();
 server.close();
 console.log(problems.length ? problems.join("\n") : "No problems found");
 console.log(`${problems.length} problem(s)`);
+process.exit(problems.length ? 1 : 0);
