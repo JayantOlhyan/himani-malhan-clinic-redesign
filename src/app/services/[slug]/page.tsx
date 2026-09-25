@@ -7,6 +7,7 @@ import { AppointmentCTA } from "@/components/AppointmentCTA";
 import { ImageSlot } from "@/components/ImageSlot";
 import { pillars } from "@/components/TrustPillars";
 import { JsonLd } from "@/components/JsonLd";
+import { SectionNav } from "@/components/SectionNav";
 import { categoryHref, detailedServices } from "@/content/services";
 import { SITE_URL, contact, doctor, telHref } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
@@ -75,6 +76,15 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         }
       />
 
+      <SectionNav
+        links={[
+          { id: "what-title", label: "Overview" },
+          { id: "who-title", label: d.indicationsTitle ?? "Who it's for" },
+          { id: "care-title", label: "Care & treatment" },
+          { id: "why-title", label: `Why ${doctor.shortName}` },
+          { id: "faq-title", label: "FAQ" },
+        ]}
+      />
       <section aria-labelledby="what-title" className="py-20 md:py-24">
         <div className="container-x grid gap-10 lg:grid-cols-12">
           <h2 id="what-title" className="display-3 hyphens-none lg:col-span-5" data-reveal>

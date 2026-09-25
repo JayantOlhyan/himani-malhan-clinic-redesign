@@ -161,6 +161,20 @@ await test("due date calculator: live result, validation and .ics download", asy
   assert(!violations.length, `axe: ${violations.join(", ")}`);
 });
 
+await test("service page: section nav follows scroll and anchors clear the sticky bars", async () => {
+  const p = await mobile.newPage();
+  await p.goto(BASE + "/services/high-risk-pregnancy/", { waitUntil: "networkidle" });
+  await p.click('nav[aria-label="On this page"] >> text=Care & treatment');
+  await p.waitForTimeout(900);
+  const top = await p.$eval("#care-title", (h) => h.getBoundingClientRect().top);
+  const navBottom = await p.$eval('nav[aria-label="On this page"]', (n) => n.getBoundingClientRect().bottom);
+  assert(top >= navBottom, `heading hidden under sticky nav (${top} < ${navBottom})`);
+  await p.$eval("#faq-title", (h) => h.scrollIntoView({ behavior: "instant" }));
+  await p.waitForTimeout(500);
+  const current = await p.$eval('nav[aria-label="On this page"] [aria-current="location"]', (a) => a.textContent);
+  assert(current === "FAQ", `active item is ${current}`);
+});
+
 for (const r of results) console.log(r);
 console.log(failures ? `\n${failures} failing` : `\nall ${results.length} passed`);
 await browser.close();
