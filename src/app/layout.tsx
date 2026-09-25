@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { MobileActionBar } from "@/components/MobileActionBar";
+import { SearchDialog } from "@/components/SearchDialog";
 import { SITE_URL, doctor } from "@/content/site";
 import { validateContent } from "@/content/validate";
 import "./globals.css";
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main id="main">{children}</main>
         <Footer />
         <MobileActionBar />
+        <SearchDialog />
       </body>
     </html>
   );

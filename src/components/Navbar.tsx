@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Menu, Phone, X } from "lucide-react";
+import { ArrowRight, Menu, Phone, Search, X } from "lucide-react";
+import { openSearch } from "./SearchDialog";
 import { Logo } from "./Logo";
 import { contact, nav, telHref } from "@/content/site";
 
@@ -11,6 +12,11 @@ export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // Rendered after mount to avoid a hydration mismatch; Apple platforms use ⌘, everything else Ctrl.
+  const [shortcut, setShortcut] = useState("Ctrl K");
+  useEffect(() => {
+    if (/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)) setShortcut("⌘K");
+  }, []);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -86,6 +92,17 @@ export function Navbar() {
               <Phone className="h-4 w-4" aria-hidden="true" />
               {contact.phoneDisplay}
             </a>
+            <button
+              type="button"
+              onClick={openSearch}
+              aria-label="Search the site"
+              aria-keyshortcuts="Control+K Meta+K /"
+              className="inline-flex h-11 min-w-11 items-center justify-center gap-2 border-line-strong px-2 text-plum transition-colors hover:border-plum xl:border xl:px-3"
+            >
+              <Search className="h-[18px] w-[18px]" aria-hidden="true" />
+              <span className="hidden text-[0.8rem] text-muted xl:inline">Search</span>
+              <kbd className="kbd hidden xl:inline-flex">{shortcut}</kbd>
+            </button>
             <Link href="/book/" className="btn btn-primary hidden !min-h-11 !px-5 sm:inline-flex">
               Book Consultation
             </Link>
