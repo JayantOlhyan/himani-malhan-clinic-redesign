@@ -59,7 +59,7 @@ export function Navbar() {
         >
           Skip to content
         </a>
-        <div className="container-x flex h-[4.5rem] items-center justify-between gap-6 lg:h-20">
+        <div className="container-x flex h-[4.5rem] items-center justify-between gap-3 sm:gap-6 lg:h-20">
           <Logo />
           <nav aria-label="Primary" className="hidden xl:block">
             <ul className="flex items-center gap-6 xl:gap-8">
@@ -79,7 +79,10 @@ export function Navbar() {
             </ul>
           </nav>
           <div className="flex items-center gap-2">
-            <a href={telHref} className="hidden items-center gap-2 px-3 text-[0.84rem] font-medium whitespace-nowrap text-plum 2xl:inline-flex">
+            <a
+              href={telHref}
+              className="hidden min-h-11 items-center gap-2 px-3 text-[0.84rem] font-medium whitespace-nowrap text-plum 2xl:inline-flex"
+            >
               <Phone className="h-4 w-4" aria-hidden="true" />
               {contact.phoneDisplay}
             </a>

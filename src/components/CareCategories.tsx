@@ -7,14 +7,14 @@ export function CareCategory({ category, index }: { category: Cat; index: number
   const shown = category.services.slice(0, 4);
   const more = category.services.length - shown.length;
   return (
-    <li className="group relative border-t border-line transition-colors duration-500 hover:bg-paper" data-reveal>
-      <div className="grid gap-4 py-8 md:grid-cols-12 md:gap-6 md:py-10 md:pr-4">
-        <span className="font-serif text-lg text-rose-ink italic md:col-span-1 md:pl-4 md:text-xl" aria-hidden="true">
+    <li className="group @container relative border-t border-line transition-colors duration-500 hover:bg-paper" data-reveal>
+      <div className="grid gap-4 py-8 @2xl:grid-cols-12 @2xl:gap-6 @2xl:py-10 @2xl:pr-4">
+        <span className="font-serif text-lg text-rose-ink italic @2xl:col-span-1 @2xl:pl-4 @2xl:text-xl" aria-hidden="true">
           {String(index + 1).padStart(2, "0")}
         </span>
-        <div className="md:col-span-4">
+        <div className="@2xl:col-span-4">
           <p className="text-[0.6875rem] font-semibold tracking-[0.16em] text-muted uppercase">{category.eyebrow}</p>
-          <h3 className="mt-2 font-serif text-[1.9rem] leading-[1.05] md:text-[2.3rem]">
+          <h3 className="mt-2 font-serif text-[1.9rem] leading-[1.05] @2xl:text-[2.3rem]">
             <Link
               href={categoryHref(category.slug)}
               className="after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-plum"
@@ -23,8 +23,8 @@ export function CareCategory({ category, index }: { category: Cat; index: number
             </Link>
           </h3>
         </div>
-        <p className="text-[0.95rem] leading-relaxed text-muted md:col-span-4">{category.description}</p>
-        <div className="flex items-start justify-between gap-6 md:col-span-3">
+        <p className="text-[0.95rem] leading-relaxed text-muted @2xl:col-span-4">{category.description}</p>
+        <div className="flex items-start justify-between gap-6 @2xl:col-span-3">
           <ul className="space-y-1.5 text-[0.85rem] text-charcoal/85">
             {shown.map((s) => (
               <li key={s.slug}>{s.name}</li>

@@ -10,17 +10,17 @@ const items = [
 
 export function TrustStrip() {
   return (
-    <section aria-label="At a glance" className="border-y border-line bg-paper">
-      <dl className="container-x grid grid-cols-2 md:grid-cols-5">
+    <section aria-label="At a glance" className="@container border-y border-line bg-paper">
+      <dl className="container-x grid grid-cols-2 @4xl:grid-cols-5">
         {items.map((it, i) => (
           <div
             key={it.label}
-            className={`flex flex-col gap-1.5 border-line py-6 md:border-l md:px-6 md:first:border-l-0 md:first:pl-0 ${
-              i % 2 === 1 ? "border-l pl-5 md:pl-6" : ""
-            } ${i >= 2 ? "border-t md:border-t-0" : ""} ${i === items.length - 1 ? "col-span-2 md:col-span-1" : ""}`}
+            className={`flex flex-col gap-1.5 border-line py-6 @4xl:border-l @4xl:px-5 @4xl:first:border-l-0 @4xl:first:pl-0 @5xl:px-6 ${
+              i % 2 === 1 ? "border-l pl-5" : ""
+            } ${i >= 2 ? "border-t @4xl:border-t-0" : ""} ${i === items.length - 1 ? "col-span-2 @4xl:col-span-1" : ""}`}
           >
             <dt className="text-[0.6875rem] font-semibold tracking-[0.16em] text-muted uppercase">{it.label}</dt>
-            <dd className="font-serif text-[1.3rem] leading-tight text-plum md:text-[1.4rem]">{it.value}</dd>
+            <dd className="font-serif text-[1.3rem] leading-tight text-plum @5xl:text-[1.4rem]">{it.value}</dd>
           </div>
         ))}
       </dl>

@@ -16,11 +16,13 @@ export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
   const main = tone === "dark" ? "text-plum" : "text-ivory";
   const sub = tone === "dark" ? "text-muted" : "text-ivory/70";
   return (
-    <Link href="/" className="group inline-flex items-center gap-3" aria-label={`${doctor.name} — home`}>
-      <LotusMark className={`h-9 w-9 shrink-0 ${tone === "dark" ? "text-rose-ink" : "text-rose"}`} />
+    <Link href="/" className="group inline-flex min-w-0 items-center gap-2.5 min-[360px]:gap-3" aria-label={`${doctor.name} — home`}>
+      <LotusMark className={`h-8 w-8 shrink-0 min-[360px]:h-9 min-[360px]:w-9 ${tone === "dark" ? "text-rose-ink" : "text-rose"}`} />
       <span className="flex flex-col leading-none">
-        <span className={`font-serif text-[1.35rem] font-semibold tracking-[-0.01em] whitespace-nowrap ${main}`}>{doctor.name}</span>
-        <span className={`mt-1.5 text-[0.6875rem] font-semibold tracking-[0.14em] whitespace-nowrap uppercase ${sub}`}>
+        <span className={`font-serif text-[1.2rem] font-semibold tracking-[-0.01em] whitespace-nowrap min-[360px]:text-[1.35rem] ${main}`}>
+          {doctor.name}
+        </span>
+        <span className={`mt-1.5 hidden text-[0.6875rem] font-semibold tracking-[0.14em] whitespace-nowrap uppercase min-[360px]:block ${sub}`}>
           Obstetrician &amp; Gynaecologist
         </span>
       </span>

@@ -19,16 +19,16 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-10 md:col-span-4">
           <div>
             <h2 className="eyebrow">Practice</h2>
-            <ul className="mt-5 space-y-3 text-sm">
+            <ul className="mt-5 space-y-2 text-sm">
               {nav.map((n) => (
                 <li key={n.href}>
-                  <Link className="hover:text-ivory" href={n.href}>
+                  <Link className="inline-flex min-h-6 items-center hover:text-ivory" href={n.href}>
                     {n.label}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link className="hover:text-ivory" href="/book/">
+                <Link className="inline-flex min-h-6 items-center hover:text-ivory" href="/book/">
                   Book Consultation
                 </Link>
               </li>
@@ -36,10 +36,10 @@ export function Footer() {
           </div>
           <div>
             <h2 className="eyebrow">Areas of care</h2>
-            <ul className="mt-5 space-y-3 text-sm">
+            <ul className="mt-5 space-y-2 text-sm">
               {categories.map((c) => (
                 <li key={c.slug}>
-                  <Link className="hover:text-ivory" href={categoryHref(c.slug)}>
+                  <Link className="inline-flex min-h-6 items-center hover:text-ivory" href={categoryHref(c.slug)}>
                     {c.name}
                   </Link>
                 </li>
@@ -50,15 +50,15 @@ export function Footer() {
 
         <div className="md:col-span-4">
           <h2 className="eyebrow">Contact</h2>
-          <ul className="mt-5 space-y-3 text-sm">
+          <ul className="mt-5 space-y-2 text-sm">
             <li>
-              <a href={telHref} className="inline-flex items-center gap-3 hover:text-ivory">
+              <a href={telHref} className="inline-flex min-h-6 items-center gap-3 hover:text-ivory">
                 <Phone className="h-4 w-4 text-rose" aria-hidden="true" />
                 {contact.phoneDisplay}
               </a>
             </li>
             <li>
-              <a href={mailHref} className="inline-flex items-center gap-3 break-all hover:text-ivory">
+              <a href={mailHref} className="inline-flex min-h-6 items-center gap-3 break-all hover:text-ivory">
                 <Mail className="h-4 w-4 shrink-0 text-rose" aria-hidden="true" />
                 {contact.email}
               </a>

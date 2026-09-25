@@ -26,6 +26,8 @@
 
 @layer base {
   html {
+    /* 16px up to ~1600px wide, then scales to 18px so large displays aren't a small island. Respects user font size. */
+    font-size: clamp(100%, 0.35rem + 0.66vw, 112.5%);
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
     scroll-padding-top: 6rem;
@@ -162,6 +164,13 @@
   }
   .btn:hover svg {
     transform: translateX(3px);
+  }
+  /* Long labels may wrap on very narrow phones instead of overflowing. */
+  @media (max-width: 399px) {
+    .btn {
+      white-space: normal;
+      text-align: center;
+    }
   }
   .btn-primary {
     background: var(--color-plum);

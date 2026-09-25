@@ -54,8 +54,8 @@ export function BookingForm() {
   const label = "text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-plum";
 
   return (
-    <form onSubmit={submit("whatsapp")} noValidate className="grid gap-6" aria-describedby="booking-note">
-      <div className="grid gap-6 sm:grid-cols-2">
+    <form onSubmit={submit("whatsapp")} noValidate className="@container grid gap-6" aria-describedby="booking-note">
+      <div className="grid gap-6 @lg:grid-cols-2">
         <label className="block">
           <span className={label}>Full name</span>
           <input className={input} name="name" autoComplete="name" required value={f.name} onChange={set("name")} />
@@ -77,7 +77,7 @@ export function BookingForm() {
       </div>
       <fieldset>
         <legend className={label}>Preferred clinic</legend>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <div className="mt-3 grid gap-3 @lg:grid-cols-2">
           {clinics.map((c) => (
             <label
               key={c.id}

@@ -20,7 +20,7 @@ export function Breadcrumbs({ items, tone = "dark" }: { items: Crumb[]; tone?: "
                   {c.name}
                 </span>
               ) : (
-                <Link href={c.href} className="underline-offset-4 hover:underline">
+                <Link href={c.href} className="inline-flex min-h-6 items-center underline-offset-4 hover:underline">
                   {c.name}
                 </Link>
               )}
