@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { ImageSlot } from "./ImageSlot";
-import { images } from "@/content/site";
+import { SonarVisual } from "./SonarVisual";
 import { allServices } from "@/content/services";
 
 export function SpecialistFeature() {
@@ -29,14 +28,7 @@ export function SpecialistFeature() {
           </Link>
         </div>
         <div className="relative min-h-[26rem] lg:min-h-full" data-reveal="image">
-          <ImageSlot
-            src={images.highRisk.src}
-            alt={images.highRisk.alt}
-            label="Pregnancy scan / fetal medicine"
-            tone="plum"
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            className="absolute inset-0"
-          />
+          <SonarVisual className="absolute inset-0" />
         </div>
       </div>
     </section>

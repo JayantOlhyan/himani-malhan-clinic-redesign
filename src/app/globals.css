@@ -265,6 +265,29 @@
     }
   }
 
+  /* Ultrasound-sector artwork (SonarVisual). */
+  @media (prefers-reduced-motion: no-preference) {
+    .sonar-sweep {
+      animation: sonar-sweep 7s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+    }
+    .sonar-dot {
+      animation: sonar-pulse 2.4s ease-in-out infinite;
+    }
+  }
+  @keyframes sonar-sweep {
+    from {
+      transform: rotate(-31deg);
+    }
+    to {
+      transform: rotate(31deg);
+    }
+  }
+  @keyframes sonar-pulse {
+    50% {
+      opacity: 0.25;
+    }
+  }
+
   /* Accordion */
   .faq summary {
     list-style: none;
